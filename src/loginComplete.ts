@@ -6,13 +6,13 @@ function isLoginData(data: any): data is ILoginData {
   return data ? "email" in data && "clientAssertionResponse" in data : false;
 }
 
-export default async function (data: any) {
+export default async function (data: any, privateKey: string) {
   if (!isLoginData(data)) {
     throw new Error("TODO: Add proper error");
   }
 
   try {
-    const resp = await verifyLoginData(data);
+    const resp = await verifyLoginData(data, privateKey);
     if (resp && resp.status === 200) {
       // TODO: Verify signature
       return true;
