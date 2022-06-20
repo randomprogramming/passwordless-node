@@ -9,14 +9,27 @@ function isLoginData(data: any): data is ILoginData {
   return data ? "email" in data && "clientAssertionResponse" in data : false;
 }
 
-export default async function (data: any, passwordlessPrivateKey: string) {
+interface Options {
+  authPublicKey?: string;
+  customServerBaseUrl?: string;
+}
+
+export default async function (
+  data: any,
+  passwordlessPrivateKey: string,
+  options?: Options
+) {
   if (!isLoginData(data)) {
     throw new AuthenticationError("Passed in data is not valid.");
   }
 
   let resp: AxiosResponse | null = null;
   try {
-    resp = await verifyLoginData(data, passwordlessPrivateKey);
+    resp = await verifyLoginData(
+      data,
+      passwordlessPrivateKey,
+      options?.customServerBaseUrl
+    );
   } catch (err) {
     throw new AuthenticationError("API call failed.");
   }
@@ -24,7 +37,7 @@ export default async function (data: any, passwordlessPrivateKey: string) {
   try {
     if (resp && resp.status === 200 && resp.data?.signedMessage) {
       const decrypted = publicDecrypt(
-        AUTH_PUBLIC_KEY,
+        options?.authPublicKey || AUTH_PUBLIC_KEY,
         Buffer.from(resp.data.signedMessage, "base64")
       );
       const signedDataEquals = decrypted.equals(Buffer.from(data.email));
