@@ -1,6 +1,6 @@
 {
   "name": "passwordless-node",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "PasswordlessJS implementation for the server.",
   "main": "lib/index.js",
   "files": [
