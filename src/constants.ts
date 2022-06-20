@@ -1,5 +1,4 @@
-export const PASSWORDLESS_SERVER_BASE_URL =
-  "http://unpassapp-env.eba-rqisn7ep.eu-west-1.elasticbeanstalk.com/api";
+export const PASSWORDLESS_SERVER_BASE_URL = "https://aws.unpass.me/api";
 export const AUTH_PUBLIC_KEY =
   "-----BEGIN RSA PUBLIC KEY-----\n" +
   "MIIBCgKCAQEAnP8QVvN4kvTViB4NuT0C8armrzZYTQMB4hrPTbgp5+v/7yAblCIw\n" +
