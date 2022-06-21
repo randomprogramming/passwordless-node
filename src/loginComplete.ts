@@ -38,22 +38,18 @@ export default async function (
     throw new AuthenticationError("API call failed.");
   }
 
-  try {
-    if (resp && resp.status === 200 && resp.data?.signedMessage) {
-      const decrypted = publicDecrypt(
-        options?.authPublicKey || getAuthKeyFromB64(AUTH_PUBLIC_KEY),
-        Buffer.from(resp.data.signedMessage, "base64")
-      );
-      const signedDataEquals = decrypted.equals(Buffer.from(data.email));
-      if (!signedDataEquals) {
-        throw new AuthenticationError("Response data has been tampered with.");
-      }
-
-      return true;
+  if (resp && resp.status === 200 && resp.data?.signedMessage) {
+    const decrypted = publicDecrypt(
+      getAuthKeyFromB64(options?.authPublicKey || AUTH_PUBLIC_KEY),
+      Buffer.from(resp.data.signedMessage, "base64")
+    );
+    const signedDataEquals = decrypted.equals(Buffer.from(data.email));
+    if (!signedDataEquals) {
+      throw new AuthenticationError("Response data has been tampered with.");
     }
-  } catch (err) {
-    throw new AuthenticationError("Failed to verify API response.");
+
+    return true;
   }
 
-  throw new AuthenticationError("Authentication failed for unknown reason.");
+  throw new AuthenticationError("Failed to authenticate user.");
 }
