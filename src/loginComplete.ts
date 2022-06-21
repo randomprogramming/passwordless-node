@@ -9,6 +9,10 @@ function isLoginData(data: any): data is ILoginData {
   return data ? "email" in data && "clientAssertionResponse" in data : false;
 }
 
+function getAuthKeyFromB64(b64: string): string {
+  return Buffer.from(b64, "base64").toString();
+}
+
 interface Options {
   authPublicKey?: string;
   customServerBaseUrl?: string;
@@ -37,7 +41,7 @@ export default async function (
   try {
     if (resp && resp.status === 200 && resp.data?.signedMessage) {
       const decrypted = publicDecrypt(
-        options?.authPublicKey || AUTH_PUBLIC_KEY,
+        options?.authPublicKey || getAuthKeyFromB64(AUTH_PUBLIC_KEY),
         Buffer.from(resp.data.signedMessage, "base64")
       );
       const signedDataEquals = decrypted.equals(Buffer.from(data.email));
